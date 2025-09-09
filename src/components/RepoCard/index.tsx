@@ -58,7 +58,9 @@ const RepoCard = React.memo(
         : [];
       if (bookmarked) {
         updatedRepos = updatedRepos.filter(repo => repo.id !== data.id);
-        setRepoList(updatedRepos);
+        if (isEnabled) {
+          setRepoList(updatedRepos);
+        }
       } else {
         updatedRepos.push(data);
       }
