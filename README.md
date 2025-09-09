@@ -1,79 +1,119 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# PowerPlay — GitHub Repo Explorer (React Native)
 
-# Getting Started
+Browse and bookmark GitHub repositories from your phone.
+Search repos, infinite-scroll 30 at a time, and save favorites locally for quick access.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## ✨ Features
 
-## Step 1: Start the Metro Server
+* **Search GitHub repositories** (GitHub REST v3)
+* **Infinite scroll** (30 repos per page)
+* **Bookmark** any repo with a star toggle
+* **Persist bookmarks** with `AsyncStorage`
+* Clean UI with `FlatList` + memoized cards
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+---
 
-To start Metro, run the following command from the _root_ of your React Native project:
+## 🛠️ Tech Stack
 
-```bash
-# using npm
-npm start
+* **React Native** `0.74.7`
+* **React Navigation (native-stack)** `^7.x`
+* **Axios** for HTTP
+* **AsyncStorage** for persistence
+* **react-native-vector-icons** for the bookmark icon
+* **react-native-config** for environment variables
+* (Dev) **Reactotron** for debugging
 
-# OR using Yarn
-yarn start
-```
+### Prerequisites
 
-## Step 2: Start your Application
+* Node 18+
+* Android Studio (or Xcode for iOS)
+* A device/emulator
+* (Optional) A GitHub token if you hit rate limits
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
+### 1) Install
 
 ```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+npm install
+# iOS only:
+npx pod-install ios
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+### 2) Environment
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+Create **`.env`** at the project root:
 
-## Step 3: Modifying your App
+```env
+HOST=https://api.github.com
+```
 
-Now that you have successfully run the app, let's modify it.
+### 2) Run
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+```bash
+# Start Metro
+npm run start
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+# Run Android (uses .env via script)
+npm run debugAssembleAndroid
+# or iOS:
+npx react-native run-ios
+```
 
-## Congratulations! :tada:
+---
 
-You've successfully run and modified your React Native App. :partying_face:
+## 🔌 API
 
-### Now what?
+### Endpoint
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+Search repositories:
 
-# Troubleshooting
+```
+GET /search/repositories?q=<query>&per_page=30&page=<n>
+Base URL: https://api.github.com
+```
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## 📲 UX Details
 
-# Learn More
+### Search
 
-To learn more about React Native, take a look at the following resources:
+* Debounced input (500ms) calls `getSearchRepo(query)`.
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+### Bookmarking
+
+* Tap the **star** on a card to toggle.
+* Stored under `AsyncStorage` key `bookmarkedRepos` as an array of repo objects.
+* “Book marked repos” switch shows only saved repos; un-starring inside this view updates the list immediately.
+
+---
+
+## 🧩 Key Components
+
+### `RepoCard.tsx`
+
+* Shows avatar, `full_name`, description, language, stars, forks, last updated.
+* Bookmark button (MaterialCommunityIcons: `star` / `star-outline`).
+* Opens repository in the browser on press.
+
+### `Home.tsx`
+
+* Header, search input, bookmark toggle.
+* `FlatList` of `RepoCard` with stable `keyExtractor = (item) => String(item.id)`.
+
+### `axios.ts`
+
+* `APIClient()` with `baseURL = HOST` from `.env`.
+* Adds GitHub headers.
+* Central place to inject a token if needed.
+
+---
+
+## 🧪 Scripts (package.json)
+
+```json
+"start": "react-native start",
+"debugAssembleAndroid": "ENVFILE=.env npx react-native run-android",
+"assembleDevAndroid": "cd android && ./gradlew clean && ENVFILE=.env ./gradlew assembleRelease",
+"assembleProdAndroid": "cd android && ./gradlew clean && ENVFILE=.env.production ./gradlew assembleRelease",
+"bundleProdAndroid": "cd android && ./gradlew clean && ENVFILE=.env.production ./gradlew bundleRelease",
+"lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+"lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+```
