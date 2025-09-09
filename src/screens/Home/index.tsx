@@ -45,7 +45,7 @@ const Home = (): React.JSX.Element => {
   useEffect(() => {
     (async () => {
       if (isEnabled) {
-        let bookMarkedRepos = await AsyncStorage.getItem('bookmarkedRepos');
+        const bookMarkedRepos = await AsyncStorage.getItem('bookmarkedRepos');
         setRepoList(bookMarkedRepos ? JSON.parse(bookMarkedRepos) : []);
       } else {
         setRepoList([]);
@@ -56,7 +56,7 @@ const Home = (): React.JSX.Element => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Text style={styles.welcomeTxt}>Repo's {`(${repoList?.length})`}</Text>
+        <Text style={styles.welcomeTxt}>Repo {`(${repoList?.length})`}</Text>
         <View style={styles.toogleContainer}>
           <Text>Book marked repos</Text>
           <Switch

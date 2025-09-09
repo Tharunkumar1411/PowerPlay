@@ -17,13 +17,6 @@ export type Repo = {
   owner: {login: string; avatar_url: string};
 };
 
-const formatCount = (n: number) =>
-  n >= 1_000_000
-    ? `${(n / 1_000_000).toFixed(1)}m`
-    : n >= 1_000
-    ? `${(n / 1_000).toFixed(1)}k`
-    : String(n);
-
 const RepoCard = React.memo(
   ({
     data,
@@ -44,9 +37,11 @@ const RepoCard = React.memo(
             markedRepos ?? '',
           )?.filter((i: Repo) => i.id === data.id);
 
-          filter && filter.length > 0
-            ? setBookmarked(true)
-            : setBookmarked(false);
+          if (filter && filter.length > 0) {
+            setBookmarked(true);
+          } else {
+            setBookmarked(false);
+          }
         }
       })();
     }, [data, isEnabled]);
@@ -58,7 +53,7 @@ const RepoCard = React.memo(
         : [];
       if (bookmarked) {
         updatedRepos = updatedRepos.filter(repo => repo.id !== data.id);
-        if (isEnabled) {
+        if (!isEnabled) {
           setRepoList(updatedRepos);
         }
       } else {
@@ -76,7 +71,7 @@ const RepoCard = React.memo(
         style={styles.card}
         onPress={() => Linking.openURL(data.html_url)}>
         <Image source={{uri: data.owner.avatar_url}} style={styles.avatar} />
-        <View style={{flex: 1}}>
+        <View style={styles.cardContainer}>
           <Text style={styles.name} numberOfLines={1}>
             {data.full_name}
           </Text>
@@ -89,10 +84,6 @@ const RepoCard = React.memo(
             {data.language ? (
               <Text style={styles.meta}>{data.language}</Text>
             ) : null}
-            <Text style={styles.meta}>
-              ★ {formatCount(data.stargazers_count)}
-            </Text>
-            <Text style={styles.meta}>⑂ {formatCount(data.forks_count)}</Text>
             <Text style={styles.meta}>
               Updated {data.updated_at.slice(0, 10)}
             </Text>
@@ -121,6 +112,9 @@ export default RepoCard;
 
 const styles = StyleSheet.create({
   listContent: {padding: 16},
+  cardContainer: {
+    flex: 1,
+  },
   card: {
     flexDirection: 'row',
     gap: 12,

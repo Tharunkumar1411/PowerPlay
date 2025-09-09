@@ -36,16 +36,10 @@ module.exports = {
     "react-native/react-native": true,
   },
   rules: {
-    quotes: [
-      "error",
-      "double",
-      {
-        avoidEscape: true,
-      },
-    ],
     "max-len": ["error", 150],
     "@typescript-eslint/ban-ts-comment": 2,
     "@typescript-eslint/no-explicit-any": 1,
+    "@typescript-eslint/no-require-imports": 0,
     "react-native/no-unused-styles": 2,
     "react-native/no-inline-styles": 1,
     "@typescript-eslint/no-empty-interface": 1,

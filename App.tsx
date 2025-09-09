@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import {StatusBar, useColorScheme} from 'react-native';
+import {StatusBar, StyleSheet, useColorScheme} from 'react-native';
 
 import Header from './src/components/Header';
 import {
@@ -34,7 +34,7 @@ function App(): React.JSX.Element {
   const scheme = useColorScheme();
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.rootContainer}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor="#75a0e6"
@@ -55,3 +55,7 @@ function App(): React.JSX.Element {
 }
 
 export default App;
+
+const styles = StyleSheet.create({
+  rootContainer: {flex: 1},
+});

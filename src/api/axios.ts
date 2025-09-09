@@ -2,15 +2,6 @@ import Axios from 'axios';
 import {HOST} from '../utils/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const defaultOptions = () => {
-  return {
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept-Type': 'application/json',
-    },
-  };
-};
-
 export const APIClient = () => {
   const axios = Axios.create({
     baseURL: HOST,
