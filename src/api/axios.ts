@@ -14,7 +14,11 @@ const defaultOptions = () => {
 export const APIClient = () => {
   const axios = Axios.create({
     baseURL: HOST,
-    ...defaultOptions(),
+    timeout: 15000,
+    headers: {
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
   });
 
   axios.interceptors.request.use(config => {
