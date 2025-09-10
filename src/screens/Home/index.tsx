@@ -70,7 +70,7 @@ const Home = (): React.JSX.Element => {
       <View style={styles.container}>
         <Text style={styles.welcomeTxt}>Repo ({repoList.length})</Text>
         <View style={styles.toogleContainer}>
-          <Text>Book marked repos</Text>
+          <Text style={styles.markText}>Book marked repos</Text>
           <Switch
             trackColor={{false: '#767577', true: '#81b0ff'}}
             thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
@@ -108,7 +108,8 @@ const Home = (): React.JSX.Element => {
 export default Home;
 
 const styles = StyleSheet.create({
-  rootContainer: {flex: 1},
+  rootContainer: {flex: 1, backgroundColor: '#f0f0f0'},
+  markText: {color: '#000', fontSize: 14, fontWeight: '400'},
   container: {
     flexDirection: 'row',
     alignItems: 'center',
