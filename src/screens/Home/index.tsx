@@ -14,6 +14,8 @@ import RepoCard from '../../components/RepoCard';
 import type {Repo} from '../../components/RepoCard';
 import UseDebounce from '../../utils/debounce';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Header from '../../components/Header';
 
 const Home = (): React.JSX.Element => {
   const [repoList, setRepoList] = React.useState<Array<Repo>>([]);
@@ -40,6 +42,10 @@ const Home = (): React.JSX.Element => {
           console.log('Error', err);
         });
     }
+
+    return () => {
+      setRepoList([]);
+    };
   }, [searchText, debounce, isEnabled]);
 
   useEffect(() => {
@@ -51,52 +57,61 @@ const Home = (): React.JSX.Element => {
         setRepoList([]);
       }
     })();
+
+    return () => {
+      setRepoList([]);
+    };
   }, [isEnabled]);
 
+  const renderItem = React.useCallback(
+    ({item}: {item: Repo}) => (
+      <RepoCard data={item} isEnabled={isEnabled} setRepoList={setRepoList} />
+    ),
+    [isEnabled, setRepoList],
+  );
+
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <Text style={styles.welcomeTxt}>Repo {`(${repoList?.length})`}</Text>
-        <View style={styles.toogleContainer}>
-          <Text>Book marked repos</Text>
-          <Switch
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleSwitch}
-            value={isEnabled}
+    <SafeAreaView style={styles.rootContainer}>
+      <ScrollView>
+        <Header />
+        <View style={styles.container}>
+          <Text style={styles.welcomeTxt}>Repo {`(${repoList?.length})`}</Text>
+          <View style={styles.toogleContainer}>
+            <Text>Book marked repos</Text>
+            <Switch
+              trackColor={{false: '#767577', true: '#81b0ff'}}
+              thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleSwitch}
+              value={isEnabled}
+            />
+          </View>
+        </View>
+
+        <View>
+          <TextInput
+            placeholder='Search Repo (eg: "react")'
+            value={searchText}
+            onChangeText={text => setSearchText(text)}
+            style={styles.input}
+            placeholderTextColor="#999"
           />
         </View>
-      </View>
 
-      <View>
-        <TextInput
-          placeholder='Search Repo (eg: "react")'
-          value={searchText}
-          onChangeText={text => setSearchText(text)}
-          style={styles.input}
-          placeholderTextColor="#999"
+        <FlatList
+          data={repoList}
+          renderItem={renderItem}
+          keyExtractor={(_, index) => index.toString()}
+          onEndReachedThreshold={0.5}
         />
-      </View>
-
-      <FlatList
-        data={repoList}
-        renderItem={({item}) => (
-          <RepoCard
-            data={item}
-            isEnabled={isEnabled}
-            setRepoList={setRepoList}
-          />
-        )}
-        keyExtractor={(_, index) => index.toString()}
-        onEndReachedThreshold={0.5}
-      />
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 export default Home;
 
 const styles = StyleSheet.create({
+  rootContainer: {flex: 1},
   container: {
     display: 'flex',
     alignItems: 'center',

@@ -8,7 +8,6 @@
 import React from 'react';
 import {StatusBar, StyleSheet, useColorScheme} from 'react-native';
 
-import Header from './src/components/Header';
 import {
   DarkTheme,
   DefaultTheme,
@@ -37,9 +36,8 @@ function App(): React.JSX.Element {
     <SafeAreaView style={styles.rootContainer}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor="#75a0e6"
+        backgroundColor={isDarkMode ? '#000' : '#fff'}
       />
-      <Header />
       <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack.Navigator
           initialRouteName="Home"

@@ -51,11 +51,8 @@ const RepoCard = React.memo(
       let updatedRepos: Array<Repo> = markedRepos
         ? JSON.parse(markedRepos)
         : [];
-      if (bookmarked) {
+      if (bookmarked || isEnabled) {
         updatedRepos = updatedRepos.filter(repo => repo.id !== data.id);
-        if (!isEnabled) {
-          setRepoList(updatedRepos);
-        }
       } else {
         updatedRepos.push(data);
       }
@@ -63,6 +60,7 @@ const RepoCard = React.memo(
         'bookmarkedRepos',
         JSON.stringify(updatedRepos),
       );
+      if (isEnabled) setRepoList(updatedRepos);
       setBookmarked(!bookmarked);
     };
 
